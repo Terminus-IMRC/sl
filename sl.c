@@ -32,10 +32,18 @@
 /* sl version 1.00 : SL runs vomitting out smoke.                            */
 /*						by Toyoda Masashi 1992/12/11 */
 
-#include <curses.h>
+/*#include <curses.h>*/
+#include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include "sl.h"
+
+enum{
+	OK, ERR
+};
+
+int LINES, COLS;
 
 int ACCIDENT  = 0;
 int LOGO      = 0;
@@ -46,8 +54,10 @@ int my_mvaddstr(int y, int x, char *str)
 {
     for ( ; x < 0; ++x, ++str)
 	if (*str == '\0')  return ERR;
-    for ( ; *str != '\0'; ++str, ++x)
-	if (mvaddch(y, x, *str) == ERR)  return ERR;
+    for ( ; *str != '\0'; ++str, ++x){
+	/*if (mvaddch(y, x, *str) == ERR)  return ERR;*/
+	printf("\e[%d;%dH%c", y, x, *str);
+    }
     return OK;
 }
 
@@ -69,17 +79,22 @@ void option(char *str)
 int main(int argc, char *argv[])
 {
     int x, i;
+    struct winsize w;
 
     for (i = 1; i < argc; ++i) {
 	if (*argv[i] == '-') {
 	    option(argv[i] + 1);
 	}
     }
-    initscr();
+    /*initscr();
     signal(SIGINT, SIG_IGN);
     noecho();
     leaveok(stdscr, TRUE);
-    scrollok(stdscr, FALSE);
+    scrollok(stdscr, FALSE);*/
+
+	ioctl(0, TIOCGWINSZ, &w);
+	LINES=w.ws_row;
+	COLS=w.ws_col;
 
     for (x = COLS - 1; ; --x) {
 	if (LOGO == 1) {
@@ -91,11 +106,12 @@ int main(int argc, char *argv[])
 	else {
 	    if (add_D51(x) == ERR) break;
 	}
-	refresh();
+	/*refresh();*/
 	usleep(40000);
     }
-    mvcur(0, COLS - 1, LINES - 1, 0);
-    endwin();
+    /*mvcur(0, COLS - 1, LINES - 1, 0);
+    endwin();*/
+    printf("\e[0;0H");
 }
 
 
