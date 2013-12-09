@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
     leaveok(stdscr, TRUE);
     scrollok(stdscr, FALSE);*/
 
+	printf("\ec\e[?25l");
 	ioctl(0, TIOCGWINSZ, &w);
 	LINES=w.ws_row;
 	COLS=w.ws_col;
@@ -111,7 +112,7 @@ int main(int argc, char *argv[])
     }
     /*mvcur(0, COLS - 1, LINES - 1, 0);
     endwin();*/
-    printf("\e[0;0H");
+    printf("\e[?25h\ec");
 }
 
 
