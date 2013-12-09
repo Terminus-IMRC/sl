@@ -34,6 +34,7 @@
 
 /*#include <curses.h>*/
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -49,6 +50,29 @@ int ACCIDENT  = 0;
 int LOGO      = 0;
 int FLY       = 0;
 int C51       = 0;
+
+void reset_display_attrs()
+{
+	fputs("\e[?25h\ec", stdout);
+	return;
+}
+
+void caught_signal(int signo)
+{
+	switch(signo){
+		case SIGHUP:
+		case SIGINT:
+		case SIGQUIT:
+		case SIGTERM:
+		case SIGTSTP:
+			break;
+		default:
+			reset_display_attrs();
+			exit(signo);
+	}
+
+	return;
+}
 
 int my_mvaddstr(int y, int x, char *str)
 {
@@ -92,6 +116,11 @@ int main(int argc, char *argv[])
     leaveok(stdscr, TRUE);
     scrollok(stdscr, FALSE);*/
 
+	signal(SIGHUP, caught_signal);
+	signal(SIGINT, caught_signal);
+	signal(SIGQUIT, caught_signal);
+	signal(SIGTERM, caught_signal);
+	signal(SIGTSTP, caught_signal);
 	printf("\ec\e[?25l");
 	ioctl(0, TIOCGWINSZ, &w);
 	LINES=w.ws_row;
