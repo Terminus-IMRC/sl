@@ -33,6 +33,7 @@
 /*						by Toyoda Masashi 1992/12/11 */
 
 /*#include <curses.h>*/
+#include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -55,10 +56,13 @@ int C51       = 0;
 
 void reset_display_attrts();
 void caught_signal(int);
+void noecho();
+void echo();
 
 void reset_display_attrs()
 {
 	fputs("\e[?25h\ec", stdout);
+	echo();
 	return;
 }
 
@@ -94,6 +98,28 @@ inline void refresh()
 	fflush(stdout);
 	write(STDOUT_FILENO, &disp[i], LINES*COLS-i);
 	fsync(STDOUT_FILENO);
+}
+
+void noecho()
+{
+	struct termios t;
+
+	tcgetattr(STDIN_FILENO, &t);
+	t.c_lflag&=~(ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
+	return;
+}
+
+void echo()
+{
+	struct termios t;
+
+	tcgetattr(STDIN_FILENO, &t);
+	t.c_lflag|=(ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
+	return;
 }
 
 void option(char *str)
@@ -138,6 +164,7 @@ int main(int argc, char *argv[])
 	LINES=w.ws_row;
 	COLS=w.ws_col;
 	disp=(char*)malloc(sizeof(char)*LINES*COLS);
+	noecho();
 
     for (x = COLS - 1; ; --x) {
 	memset(disp, ' ', sizeof(char)*LINES*COLS);
