@@ -81,7 +81,7 @@ int my_mvaddstr(int y, int x, char *str)
     for ( ; x < 0; ++x, ++str)
 	if (*str == '\0')  return ERR;
     for ( ; *str != '\0'; ++str, ++x){
-	if(y>=LINES || x>=COLS)
+	if(y>=LINES || x>=COLS || y<0 || x<0)
 		continue;
 	disp[y*COLS+x]=*str;
     }
