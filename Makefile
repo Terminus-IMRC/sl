@@ -15,3 +15,6 @@ CFLAGS=-O
 sl: sl.c sl.h
 	$(CC) $(CFLAGS) -o sl sl.c
 
+.PHONY: clean
+clean:
+	$(RM) sl
