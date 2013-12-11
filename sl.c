@@ -32,7 +32,6 @@
 /* sl version 1.00 : SL runs vomitting out smoke.                            */
 /*						by Toyoda Masashi 1992/12/11 */
 
-/*#include <curses.h>*/
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,7 +78,6 @@ int my_mvaddstr(int y, int x, char *str)
     for ( ; x < 0; ++x, ++str)
 	if (*str == '\0')  return ERR;
     for ( ; *str != '\0'; ++str, ++x){
-	/*if (mvaddch(y, x, *str) == ERR)  return ERR;*/
 	if(y>=LINES || x>=COLS)
 		continue;
 	disp[y*COLS+x]=*str;
@@ -162,11 +160,6 @@ int main(int argc, char *argv[])
     struct winsize w;
 
     process_options(argc, argv);
-    /*initscr();
-    signal(SIGINT, SIG_IGN);
-    noecho();
-    leaveok(stdscr, TRUE);
-    scrollok(stdscr, FALSE);*/
 
 	atexit(reset_display_attrs);
 	signal(SIGHUP, SIG_IGN);
@@ -195,8 +188,6 @@ int main(int argc, char *argv[])
 	refresh();
 	usleep(20000);
     }
-    /*mvcur(0, COLS - 1, LINES - 1, 0);
-    endwin();*/
 
 	return 0;
 }
