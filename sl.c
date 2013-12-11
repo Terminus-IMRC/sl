@@ -64,18 +64,9 @@ void reset_display_attrs()
 
 void caught_signal(int signo)
 {
-	switch(signo){
-		case SIGHUP:
-		case SIGINT:
-		case SIGQUIT:
-		case SIGTERM:
-		case SIGTSTP:
-			break;
-		default:
-			exit(signo);
-	}
+	/* SIGHUP, SIGINT, SIGQUIT, SIGTERM and SIGTSTP are handled to ignore. */
 
-	return;
+	exit(signo);
 }
 
 int my_mvaddstr(int y, int x, char *str)
@@ -137,11 +128,11 @@ int main(int argc, char *argv[])
     scrollok(stdscr, FALSE);*/
 
 	atexit(reset_display_attrs);
-	signal(SIGHUP, caught_signal);
-	signal(SIGINT, caught_signal);
-	signal(SIGQUIT, caught_signal);
-	signal(SIGTERM, caught_signal);
-	signal(SIGTSTP, caught_signal);
+	signal(SIGHUP, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTERM, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
 	printf("\ec\e[?25l");
 	ioctl(0, TIOCGWINSZ, &w);
 	LINES=w.ws_row;
