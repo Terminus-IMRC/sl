@@ -3,7 +3,10 @@
  *	Copyright 1993,1998,2013
  *                Toyoda Masashi 
  *		  (mtoyoda@acm.org)
- *	Last Modified: 2013/ 5/ 5
+ *      Copyright 2013
+ *                Sugizaki Yukimasa
+ *                (i.can.speak.c.and.basic@gmail.com)
+ *	Last Modified: 2013/12/11
  *========================================
  */
 /* sl version 5.00 : add -c option                                           */
