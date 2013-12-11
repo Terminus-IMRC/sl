@@ -53,6 +53,9 @@ int LOGO      = 0;
 int FLY       = 0;
 int C51       = 0;
 
+void reset_display_attrts();
+void caught_signal(int);
+
 void reset_display_attrs()
 {
 	fputs("\e[?25h\ec", stdout);
@@ -89,9 +92,10 @@ int my_mvaddstr(int y, int x, char *str)
     return OK;
 }
 
-void refresh()
+inline void refresh()
 {
-	printf("\e[1;1H%s", disp);
+	fputs("\e[1;1H", stdout);
+	fputs(disp, stdout);
 	fflush(stdout);
 }
 
@@ -153,7 +157,7 @@ int main(int argc, char *argv[])
     }
     /*mvcur(0, COLS - 1, LINES - 1, 0);
     endwin();*/
-    printf("\e[?25h\ec");
+	reset_display_attrs();
 }
 
 
