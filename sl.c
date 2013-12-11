@@ -72,7 +72,6 @@ void caught_signal(int signo)
 		case SIGTSTP:
 			break;
 		default:
-			reset_display_attrs();
 			exit(signo);
 	}
 
@@ -130,6 +129,7 @@ int main(int argc, char *argv[])
     leaveok(stdscr, TRUE);
     scrollok(stdscr, FALSE);*/
 
+	atexit(reset_display_attrs);
 	signal(SIGHUP, caught_signal);
 	signal(SIGINT, caught_signal);
 	signal(SIGQUIT, caught_signal);
@@ -157,7 +157,8 @@ int main(int argc, char *argv[])
     }
     /*mvcur(0, COLS - 1, LINES - 1, 0);
     endwin();*/
-	reset_display_attrs();
+
+	return 0;
 }
 
 
