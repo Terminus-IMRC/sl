@@ -139,7 +139,8 @@ int main(int argc, char *argv[])
 	ioctl(0, TIOCGWINSZ, &w);
 	LINES=w.ws_row;
 	COLS=w.ws_col;
-	disp=(char*)malloc(sizeof(char)*LINES*COLS);
+	disp=(char*)malloc(sizeof(char)*LINES*COLS+1);
+	disp[LINES*COLS]='\0';
 
     for (x = COLS - 1; ; --x) {
 	memset(disp, ' ', sizeof(char)*LINES*COLS);
