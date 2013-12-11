@@ -35,6 +35,7 @@
 /*#include <curses.h>*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h>
 #include <signal.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -45,6 +46,7 @@ enum{
 };
 
 int LINES, COLS;
+char *disp;
 
 int ACCIDENT  = 0;
 int LOGO      = 0;
@@ -80,9 +82,17 @@ int my_mvaddstr(int y, int x, char *str)
 	if (*str == '\0')  return ERR;
     for ( ; *str != '\0'; ++str, ++x){
 	/*if (mvaddch(y, x, *str) == ERR)  return ERR;*/
-	printf("\e[%d;%dH%c", y, x, *str);
+	if(y>=LINES || x>=COLS)
+		continue;
+	disp[y*COLS+x]=*str;
     }
     return OK;
+}
+
+void refresh()
+{
+	printf("\ec\e[1;1H%s", disp);
+	fflush(stdout);
 }
 
 void option(char *str)
@@ -125,8 +135,10 @@ int main(int argc, char *argv[])
 	ioctl(0, TIOCGWINSZ, &w);
 	LINES=w.ws_row;
 	COLS=w.ws_col;
+	disp=(char*)malloc(sizeof(char)*LINES*COLS);
 
     for (x = COLS - 1; ; --x) {
+	memset(disp, ' ', sizeof(char)*LINES*COLS);
 	if (LOGO == 1) {
 	    if (add_sl(x) == ERR) break;
 	}
@@ -136,7 +148,7 @@ int main(int argc, char *argv[])
 	else {
 	    if (add_D51(x) == ERR) break;
 	}
-	/*refresh();*/
+	refresh();
 	usleep(40000);
     }
     /*mvcur(0, COLS - 1, LINES - 1, 0);
