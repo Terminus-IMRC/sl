@@ -58,6 +58,7 @@ void reset_display_attrts();
 void caught_signal(int);
 void noecho();
 void echo();
+void process_options(int argc, char **argv);
 
 void reset_display_attrs()
 {
@@ -122,19 +123,37 @@ void echo()
 	return;
 }
 
-void option(char *str)
+void process_options(int argc, char **argv)
 {
-    extern int ACCIDENT, FLY, LONG;
+	int c;
 
-    while (*str != '\0') {
-	switch (*str++) {
-	    case 'a': ACCIDENT = 1; break;
-	    case 'F': FLY      = 1; break;
-	    case 'l': LOGO     = 1; break;
-	    case 'c': C51      = 1; break;
-	    default:                break;
-	}
-    }
+	extern int ACCIDENT, FLY, LONG;
+
+	opterr=0;
+
+	while((c=getopt(argc, argv, "aFlc"))!=-1)
+		switch(c){
+			case 'a':
+				ACCIDENT=1;
+				break;
+			case 'F':
+				FLY=1;
+				break;
+			case 'l':
+				LOGO=1;
+				break;
+			case 'c':
+				C51=1;
+				break;
+			case '?':
+				fprintf(stderr, "%s: unknown option: -%c\n", argv[0], optopt);
+				exit(EXIT_FAILURE);
+			default:
+				fprintf(stderr, "%s: internal getopt error occured\n", argv[0]);
+				abort();
+		}
+
+	return;
 }
 
 int main(int argc, char *argv[])
@@ -142,11 +161,7 @@ int main(int argc, char *argv[])
     int x, i;
     struct winsize w;
 
-    for (i = 1; i < argc; ++i) {
-	if (*argv[i] == '-') {
-	    option(argv[i] + 1);
-	}
-    }
+    process_options(argc, argv);
     /*initscr();
     signal(SIGINT, SIG_IGN);
     noecho();
