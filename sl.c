@@ -91,7 +91,7 @@ int my_mvaddstr(int y, int x, char *str)
 
 void refresh()
 {
-	printf("\ec\e[1;1H%s", disp);
+	printf("\e[1;1H%s", disp);
 	fflush(stdout);
 }
 
