@@ -93,9 +93,16 @@ int my_mvaddstr(int y, int x, char *str)
 
 inline void refresh()
 {
-	fputs("\e[1;1H", stdout);
-	fputs(disp, stdout);
+	int i;
+
+	for(i=0; i<LINES*COLS; i++)
+		if(disp[i]!=' ')
+			break;
+
+	printf("\e[%d;%dH", i/COLS+1, i%COLS+1);
 	fflush(stdout);
+	write(STDOUT_FILENO, &disp[i], LINES*COLS-i);
+	fsync(STDOUT_FILENO);
 }
 
 void option(char *str)
@@ -154,7 +161,7 @@ int main(int argc, char *argv[])
 	    if (add_D51(x) == ERR) break;
 	}
 	refresh();
-	usleep(40000);
+	usleep(20000);
     }
     /*mvcur(0, COLS - 1, LINES - 1, 0);
     endwin();*/
